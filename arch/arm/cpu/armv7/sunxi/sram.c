@@ -21,6 +21,8 @@ void sunxi_sram_init(void)
 	 * The boot0 sources describe this as: "config ema for cache sram"
 	 * Newer SoCs (A83T, H3 and anything beyond) don't need this anymore.
 	 */
+    #ifndef CONFIG_MACH_SUN8I_T113
+
 	if (IS_ENABLED(CONFIG_MACH_SUN6I))
 		setbits_le32(SUNXI_SRAMC_BASE + 0x44, 0x1800);
 
@@ -37,4 +39,6 @@ void sunxi_sram_init(void)
 				setbits_le32(SUNXI_SRAMC_BASE + 0x44, 0xc0);
 		}
 	}
+
+    #endif
 }

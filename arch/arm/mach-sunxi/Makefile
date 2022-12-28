@@ -22,7 +22,11 @@ obj-$(CONFIG_MACH_SUN50I)	+= clock_sun6i.o
 ifdef CONFIG_MACH_SUN8I_A83T
 obj-y				+= clock_sun8i_a83t.o
 else
+ifdef CONFIG_MACH_SUN8I_T113
+obj-y				+= clock_sun8i_t113.o
+else
 obj-$(CONFIG_MACH_SUN8I)	+= clock_sun6i.o
+endif
 endif
 obj-$(CONFIG_MACH_SUN9I)	+= clock_sun9i.o gtbus_sun9i.o
 obj-$(CONFIG_SUN50I_GEN_H6)	+= clock_sun50i_h6.o

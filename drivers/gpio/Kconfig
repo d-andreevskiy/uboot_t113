@@ -616,4 +616,19 @@ config ADP5585_GPIO
 	help
 	  Support ADP5585 GPIO expander.
 
+
+if ARCH_SUNXI
+choice
+	prompt "sunxi gpio ip version"
+	default SUNXI_GPIO_V1
+
+config SUNXI_GPIO_V1
+	bool "sunxi gpio v1"
+
+config SUNXI_GPIO_V2
+	bool "sunxi gpio v2"
+
+endchoice
+endif
+
 endif

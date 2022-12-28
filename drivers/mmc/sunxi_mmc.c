@@ -133,6 +133,8 @@ static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 #ifdef CONFIG_MACH_SUN9I
 		pll = CCM_MMC_CTRL_PLL_PERIPH0;
 		pll_hz = clock_get_pll4_periph0();
+#elif CONFIG_MACH_SUN8I_T113
+
 #else
 		/*
 		 * SoCs since the A64 (H5, H6, H616) actually use the doubled
@@ -572,7 +574,7 @@ struct mmc *sunxi_mmc_init(int sdc_no)
 
 	/* config ahb clock */
 	debug("init mmc %d clock and io\n", sdc_no);
-#if !defined(CONFIG_SUN50I_GEN_H6)
+#if !defined(CONFIG_SUN50I_GEN_H6) && !defined(CONFIG_MACH_SUN8I_T113)
 	setbits_le32(&ccm->ahb_gate0, 1 << AHB_GATE_OFFSET_MMC(sdc_no));
 
 #ifdef CONFIG_SUNXI_GEN_SUN6I
