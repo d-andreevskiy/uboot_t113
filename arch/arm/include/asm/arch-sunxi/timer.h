@@ -59,6 +59,18 @@ struct sunxi_tgp {
 	u32 tgpd;
 };
 
+#ifdef CONFIG_MACH_SUN8I_T113
+struct sunxi_timer_reg {
+	volatile u32 tirqen; /* 0x00 */
+	volatile u32 tirqsta; /* 0x04 */
+	uint res1[2];
+	struct sunxi_timer timer[2]; /* We have 2 timers */
+	uint res2[0x70 / 4]; /* 0x70 */
+	struct sunxi_wdog wdog[1]; /* 0xa0 */
+	struct sunxi_avs avs; /* 0xc0 */
+};
+
+#else
 struct sunxi_timer_reg {
 	u32 tirqen;		/* 0x00 */
 	u32 tirqsta;		/* 0x04 */
@@ -81,6 +93,10 @@ struct sunxi_timer_reg {
 	struct sunxi_wdog wdog[5];	/* We have 5 watchdogs */
 #endif
 };
+
+#endif
+
+
 
 #endif /* __ASSEMBLY__ */
 
