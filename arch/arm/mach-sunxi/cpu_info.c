@@ -94,7 +94,7 @@ int print_cpuinfo(void)
 #elif defined CONFIG_MACH_SUN8I_V3S
 	printf("CPU:   Allwinner V3s (SUN8I %04x)\n", sunxi_get_sram_id());
 #elif defined CONFIG_MACH_SUN8I_T113
-	printf("CPU:   Allwinner V3s (SUN8I %04x)\n", sunxi_get_sram_id());
+	printf("CPU:   Allwinner T113-S3 (SUN8I %04x)\n", sunxi_get_sram_id());
 #elif defined CONFIG_MACH_SUN9I
 	puts("CPU:   Allwinner A80 (SUN9I)\n");
 #elif defined CONFIG_MACH_SUN50I

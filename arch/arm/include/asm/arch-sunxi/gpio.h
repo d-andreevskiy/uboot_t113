@@ -176,7 +176,12 @@ enum sunxi_gpio_number {
 /* GPIO pin function config */
 #define SUNXI_GPIO_INPUT	0
 #define SUNXI_GPIO_OUTPUT	1
+#ifdef CONFIG_MACH_SUN8I_T113
+#define SUNXI_GPIO_DISABLE	0xF
+#else
 #define SUNXI_GPIO_DISABLE	7
+#endif
+
 
 #define SUN8I_H3_GPA_UART0	2
 #define SUN8I_H3_GPA_UART2	2

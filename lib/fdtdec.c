@@ -1655,7 +1655,7 @@ int fdtdec_setup(void)
 	/* Allow the early environment to override the fdt address */
 	if (!IS_ENABLED(CONFIG_SPL_BUILD)) {
 		ulong addr;
-
+        /* fdtcontroladdr is set initr_env */
 		addr = env_get_hex("fdtcontroladdr", 0);
 		if (addr) {
 			gd->fdt_blob = map_sysmem(addr, 0);

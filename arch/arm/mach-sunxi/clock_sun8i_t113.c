@@ -204,8 +204,8 @@ void clock_init_safe(void)
 {
     sunxi_clk_init();
     
-    writel(0x01FFFFFF, 0x02000098);
-    writel(0x00000000, 0x020000A0);
+    // writel(0x01FFFFFF, 0x02000098);
+    // writel(0x00000000, 0x020000A0);
 }
 #endif
 

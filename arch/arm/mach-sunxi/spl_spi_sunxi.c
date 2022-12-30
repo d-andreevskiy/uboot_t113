@@ -75,6 +75,25 @@
 #define SUN6I_TCR_XCH               BIT(31)
 
 /*****************************************************************************/
+/* T113 variant of the SPI controller                                       */
+/*****************************************************************************/
+#define	T113_SPI0_GCR	    0x04
+#define	T113_SPI0_TCR	    0x08
+#define	T113_SPI0_IER	    0x10
+#define	T113_SPI0_ISR	    0x14
+#define	T113_SPI0_FCR	    0x18
+#define	T113_SPI0_FSR	    0x1c
+#define	T113_SPI0_WCR	    0x20
+#define	T113_SPI0_CCR	    0x24
+#define	T113_SPI0_MBC	    0x30
+#define	T113_SPI0_MTC	    0x34
+#define	T113_SPI0_BCC	    0x38
+#define	T113_SPI0_TXD	    0x200
+#define	T113_SPI0_RXD	    0x300
+
+/*****************************************************************************/
+#define T113_SPI_BGR_REG            (0x0200196c)
+#define T113_SPI_CLK_REG            (0x02001940)
 
 #define CCM_AHB_GATING0             (0x01C20000 + 0x60)
 #define CCM_H6_SPI_BGR_REG          (0x03001000 + 0x96c)
@@ -101,6 +120,15 @@
  */
 static void spi0_pinmux_setup(unsigned int pin_function)
 {
+    if(IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+    {
+        sunxi_gpio_set_cfgpin(SUNXI_GPC(2), pin_function);
+        sunxi_gpio_set_cfgpin(SUNXI_GPC(3), pin_function);
+        sunxi_gpio_set_cfgpin(SUNXI_GPC(4), pin_function);
+        sunxi_gpio_set_cfgpin(SUNXI_GPC(5), pin_function);
+        return;
+    }
+
 	/* All chips use PC0 and PC2. */
 	sunxi_gpio_set_cfgpin(SUNXI_GPC(0), pin_function);
 	sunxi_gpio_set_cfgpin(SUNXI_GPC(2), pin_function);
@@ -130,6 +158,9 @@ static bool is_sun6i_gen_spi(void)
 
 static uintptr_t spi0_base_address(void)
 {
+	if (IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+		return 0x04025000;
+
 	if (IS_ENABLED(CONFIG_MACH_SUN8I_R40))
 		return 0x01C05000;
 
@@ -149,6 +180,30 @@ static uintptr_t spi0_base_address(void)
 static void spi0_enable_clock(void)
 {
 	uintptr_t base = spi0_base_address();
+
+    if(IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+    {
+        /* Deassert SPI0 reset */
+        setbits_le32(T113_SPI_BGR_REG, (1U << 16) | 0x1);
+
+        /* Open the SPI0 gate */
+        /* Select pll-periph0 for spi0 clk */
+        /* Factor_N = 1 */
+        /* Factor_M = 6 */
+        /* spi0_sclk = 600MHz / 1 / 6 = 100MHz */
+        writel((1 << 31) | (1 << 24) | (0 << 8) | (5 << 0), T113_SPI_CLK_REG);
+
+        /* Set spi clock rate control register, divided by 2 */
+        writel(0x1000, base + T113_SPI0_CCR);
+
+        /* Enable SPI in the master mode and do a soft reset */
+        setbits_le32(base + T113_SPI0_GCR, (1 << 31) | (1 << 1) | (1 << 0));
+		/* Wait for completion */
+		while (readl(base + T113_SPI0_GCR) & (1 << 31));
+
+        return;
+    }
+
 
 	/* Deassert SPI0 reset on SUN6I */
 	if (IS_ENABLED(CONFIG_SUN50I_GEN_H6))
@@ -192,6 +247,20 @@ static void spi0_disable_clock(void)
 {
 	uintptr_t base = spi0_base_address();
 
+    if(IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+    {
+        /* disable SPI  */
+        clrbits_le32(base + T113_SPI0_GCR, (1 << 0));
+
+        /* disable clock */
+        clrbits_le32(T113_SPI_CLK_REG, (1 << 31));
+
+        /* assert SPI0 reset */
+        clrbits_le32(T113_SPI_BGR_REG, (1U << 16) | 0x1);
+
+        return;
+    }
+
 	/* Disable the SPI0 controller */
 	if (is_sun6i_gen_spi())
 		clrbits_le32(base + SUN6I_SPI0_GCR, SUN6I_CTL_MASTER |
@@ -223,7 +292,7 @@ static void spi0_init(void)
 	if (IS_ENABLED(CONFIG_MACH_SUN50I) ||
 	    IS_ENABLED(CONFIG_SUN50I_GEN_H6))
 		pin_function = SUN50I_GPC_SPI0;
-	else if (IS_ENABLED(CONFIG_MACH_SUNIV))
+	else if (IS_ENABLED(CONFIG_MACH_SUNIV) || IS_ENABLED(CONFIG_MACH_SUN8I_T113))
 		pin_function = SUNIV_GPC_SPI0;
 
 	spi0_pinmux_setup(pin_function);
@@ -234,6 +303,11 @@ static void spi0_deinit(void)
 {
 	/* New SoCs can disable pins, older could only set them as input */
 	unsigned int pin_function = SUNXI_GPIO_INPUT;
+
+    if(IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+    {
+        pin_function = SUNXI_GPIO_DISABLE;
+    }
 
 	if (is_sun6i_gen_spi())
 		pin_function = SUNXI_GPIO_DISABLE;
@@ -296,7 +370,18 @@ static void spi0_read_data(void *buf, u32 addr, u32 len)
 		if (chunk_len > SPI_READ_MAX_SIZE)
 			chunk_len = SPI_READ_MAX_SIZE;
 
-		if (is_sun6i_gen_spi()) {
+        if (IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+        {
+			sunxi_spi0_read_data(buf8, addr, chunk_len,
+					     base + T113_SPI0_TCR,
+					     (1 << 31),
+					     base + T113_SPI0_FSR,
+					     base + T113_SPI0_TXD,
+					     base + T113_SPI0_RXD,
+					     base + T113_SPI0_MBC,
+					     base + T113_SPI0_MTC,
+					     base + T113_SPI0_BCC);
+        } else if (is_sun6i_gen_spi()) {
 			sunxi_spi0_read_data(buf8, addr, chunk_len,
 					     base + SUN6I_SPI0_TCR,
 					     SUN6I_TCR_XCH,
