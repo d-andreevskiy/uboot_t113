@@ -240,4 +240,22 @@ unsigned int clock_get_pll6(void)
     return 0;
 }
 
+unsigned int clock_get_peri1x_rate(void)
+{
+	uint32_t reg32;
+	uint8_t	 plln, pllm, p0;
+
+	/* PLL PERIx */
+	reg32 = readl(T113_CCU_BASE + CCU_PLL_PERI0_CTRL_REG);
+	if (reg32 & (1 << 31)) {
+		plln = ((reg32 >> 8) & 0xff) + 1;
+		pllm = (reg32 & 0x01) + 1;
+		p0	 = ((reg32 >> 16) & 0x03) + 1;
+
+		return ((((24 * plln) / (pllm * p0)) >> 1) * 1000 * 1000);
+	}
+
+	return 0;
+}
+
 

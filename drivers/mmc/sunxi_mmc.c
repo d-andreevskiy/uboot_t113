@@ -113,12 +113,13 @@ static bool sunxi_mmc_can_calibrate(void)
 	return IS_ENABLED(CONFIG_MACH_SUN50I) ||
 	       IS_ENABLED(CONFIG_MACH_SUN50I_H5) ||
 	       IS_ENABLED(CONFIG_SUN50I_GEN_H6) ||
-	       IS_ENABLED(CONFIG_MACH_SUN8I_R40);
+	       IS_ENABLED(CONFIG_MACH_SUN8I_R40) ||
+           IS_ENABLED(CONFIG_MACH_SUN8I_T113);
 }
 
 static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 {
-	unsigned int pll, pll_hz, div, n, oclk_dly, sclk_dly;
+	unsigned int pll, pll_hz, div, n, oclk_dly, sclk_dly, mod_hz;
 	bool new_mode = IS_ENABLED(CONFIG_MMC_SUNXI_HAS_NEW_MODE);
 	u32 val = 0;
 
@@ -126,7 +127,16 @@ static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 	if (IS_ENABLED(CONFIG_MACH_SUN8I_A83T) && priv->mmc_no != 2)
 		new_mode = false;
 
-	if (hz <= 24000000) {
+    if(IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+    {
+        mod_hz = hz * 2;    /* 2 * clk : SDR */
+    }
+    else
+    {
+        mod_hz = hz;
+    }
+
+	if (mod_hz <= 24000000) {
 		pll = CCM_MMC_CTRL_OSCM24;
 		pll_hz = 24000000;
 	} else {
@@ -134,7 +144,8 @@ static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 		pll = CCM_MMC_CTRL_PLL_PERIPH0;
 		pll_hz = clock_get_pll4_periph0();
 #elif CONFIG_MACH_SUN8I_T113
-
+		pll	   = CCU_MMC_CTRL_PLL_PERIPH1X;
+		pll_hz = clock_get_peri1x_rate(); // 600Mhz  
 #else
 		/*
 		 * SoCs since the A64 (H5, H6, H616) actually use the doubled
@@ -148,8 +159,8 @@ static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 #endif
 	}
 
-	div = pll_hz / hz;
-	if (pll_hz % hz)
+	div = pll_hz / mod_hz;
+	if (pll_hz % mod_hz)
 		div++;
 
 	n = 0;

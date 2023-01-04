@@ -437,5 +437,6 @@ struct sunxi_ccm_reg {
 void clock_set_pll1(unsigned int hz);
 void clock_set_pll5(unsigned int clk);
 unsigned int clock_get_pll6(void);
+unsigned int clock_get_peri1x_rate(void);
 
 #endif /* _SUNXI_CLOCK_SUN8IW20_H */
