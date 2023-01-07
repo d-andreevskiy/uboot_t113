@@ -303,11 +303,25 @@
 	"stderr=serial\0"
 #endif
 
+/*
+    fastboot oem format
+    fastboot flash boot.vfat
+    fastboot flash rootfs.ext4
+*/
+
+#ifdef CONFIG_MACH_SUN8I_T113
+#define PARTS_DEFAULT \
+	"name=loader,start=8k,size=4M;" \
+	"name=esp,size=1024M,bootable,uuid=${uuid_gpt_esp};" \
+	"name=system,size=-,uuid=${uuid_gpt_system};"
+#else
 #define PARTS_DEFAULT \
 	"name=loader1,start=8k,size=32k,uuid=${uuid_gpt_loader1};" \
 	"name=loader2,size=984k,uuid=${uuid_gpt_loader2};" \
 	"name=esp,size=128M,bootable,uuid=${uuid_gpt_esp};" \
 	"name=system,size=-,uuid=${uuid_gpt_system};"
+#endif
+
 
 #define UUID_GPT_ESP "c12a7328-f81f-11d2-ba4b-00a0c93ec93b"
 

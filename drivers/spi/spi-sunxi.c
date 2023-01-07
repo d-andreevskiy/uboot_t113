@@ -544,6 +544,14 @@ static const struct sun4i_spi_variant sun8i_h3_spi_variant = {
 	.has_burst_ctl		= true,
 };
 
+static const struct sun4i_spi_variant sun8i_t113_spi_variant = {
+	.regs			= sun6i_spi_regs,
+	.bits			= sun6i_spi_bits,
+	.fifo_depth		= 64,
+	.has_soft_reset		= true,
+	.has_burst_ctl		= true,
+};
+
 static const struct udevice_id sun4i_spi_ids[] = {
 	{
 	  .compatible = "allwinner,sun4i-a10-spi",
@@ -556,6 +564,10 @@ static const struct udevice_id sun4i_spi_ids[] = {
 	{
 	  .compatible = "allwinner,sun8i-h3-spi",
 	  .data = (ulong)&sun8i_h3_spi_variant,
+	},
+	{
+	  .compatible = "allwinner,sun8i-t113-spi",
+	  .data = (ulong)&sun8i_t113_spi_variant,
 	},
 	{ /* sentinel */ }
 };

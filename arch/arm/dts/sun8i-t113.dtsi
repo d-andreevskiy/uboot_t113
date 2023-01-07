@@ -1,6 +1,32 @@
+#include <dt-bindings/clock/sun8i-t113-ccu.h>
+#include <dt-bindings/reset/sun8i-t113-ccu.h>
+#include <dt-bindings/clock/sun6i-rtc.h>
+
 / {
 	#address-cells = <1>;
 	#size-cells = <1>;
+
+	clocks {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		osc24M: osc24M_clk {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <24000000>;
+			clock-accuracy = <50000>;
+			clock-output-names = "osc24M";
+		};
+
+		osc32k: osc32k_clk {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <32768>;
+			clock-accuracy = <50000>;
+			clock-output-names = "ext-osc32k";
+		};
+	};
 
 	soc {
 		compatible = "simple-bus";
@@ -21,23 +47,125 @@
 				pins = "PE2", "PE3";
 				function = "uart0";
 			};
+
+			/omit-if-no-ref/
+			spi0_pins: spi0-pins {
+				pins = "PC2", "PC4", "PC5";
+				function = "spi0";
+			};
+
+			/omit-if-no-ref/
+			spi0_cs0_pin: spi0-cs0-pin {
+				pins = "PC3";
+				function = "spi0";
+			};
+
+			/omit-if-no-ref/
+			mmc0_pins: mmc0-pins {
+				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
+				function = "mmc0";
+			};
         };
+
+		ccu: clock-controller@2001000 {
+			compatible = "allwinner,sun8i-t113-ccu";
+			reg = <0x2001000 0x1000>;
+			clocks = <&osc24M>,
+				 <&rtc CLK_OSC32K>,
+				 <&rtc CLK_IOSC>;
+			clock-names = "hosc", "losc", "iosc";
+			#clock-cells = <1>;
+			#reset-cells = <1>;
+		};
 
 		uart0: serial@2500000 {
 			compatible = "snps,dw-apb-uart";
 			reg = <0x2500000 0x400>;
 			reg-io-width = <4>;
 			reg-shift = <2>;
-			// interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-			// clocks = <&ccu CLK_BUS_UART0>;
-			// resets = <&ccu RST_BUS_UART0>;
-			// dmas = <&dma 14>, <&dma 14>;
-			// dma-names = "rx", "tx";
+			clocks = <&ccu CLK_BUS_UART0>;
+			resets = <&ccu RST_BUS_UART0>;
 			status = "disabled";
 		};
 
-        mmc0: mmc@4020000 {
-            status = "disabled";
-        };
+		spi0: spi@4025000 {
+			compatible = "allwinner,sun8i-t113-spi";
+			reg = <0x4025000 0x1000>;
+			// interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_SPI0>, <&ccu CLK_SPI0>;
+			clock-names = "ahb", "mod";
+			resets = <&ccu RST_BUS_SPI0>;
+			// dmas = <&dma 22>, <&dma 22>;
+			// dma-names = "rx", "tx";
+			// num-cs = <1>;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		mmc0: mmc@4020000 {
+			compatible = "allwinner,sun8i-t113-mmc";
+			reg = <0x4020000 0x1000>;
+			// interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
+			clock-names = "ahb", "mmc";
+			resets = <&ccu RST_BUS_MMC0>;
+			reset-names = "ahb";
+			cap-sd-highspeed;
+			max-frequency = <52000000>;
+			no-mmc;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		usb_otg: usb@4100000 {
+			compatible = "allwinner,sun20i-d1-musb",
+				     "allwinner,sun8i-a33-musb";
+			reg = <0x4100000 0x400>;
+			// interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "mc";
+			clocks = <&ccu CLK_BUS_OTG>;
+			resets = <&ccu RST_BUS_OTG>;
+			extcon = <&usbphy 0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+
+		usbphy: phy@4100400 {
+			compatible = "allwinner,sun20i-d1-usb-phy";
+			reg = <0x4100400 0x100>,
+			      <0x4101800 0x100>,
+			      <0x4200800 0x100>;
+			reg-names = "phy_ctrl",
+				    "pmu0",
+				    "pmu1";
+			clocks = <&osc24M>,
+				 <&osc24M>;
+			clock-names = "usb0_phy",
+				      "usb1_phy";
+			resets = <&ccu RST_USB_PHY0>,
+				 <&ccu RST_USB_PHY1>;
+			reset-names = "usb0_reset",
+				      "usb1_reset";
+			status = "disabled";
+			#phy-cells = <1>;
+		};
+
+		rtc: rtc@7090000 {
+			compatible = "allwinner,sun20i-d1-rtc",
+				     "allwinner,sun50i-r329-rtc";
+			reg = <0x7090000 0x400>;
+			// interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+			// clocks = <&r_ccu CLK_BUS_R_RTC>,
+			// 	 <&osc24M>,
+			// 	 <&r_ccu CLK_R_AHB>;
+			clock-names = "bus", "hosc", "ahb";
+			#clock-cells = <1>;
+		};
 	};
 };
+
+
+

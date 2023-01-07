@@ -551,6 +551,8 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun8i_v3s_pinctrl_desc = {
 
 static const struct sunxi_pinctrl_function sun8i_t113_pinctrl_functions[] = {
 	{ "uart0",	6 },	/* PE2-PE3 */
+    { "spi0",	2 },	/* PC2-PC5 */
+    { "mmc0",	2 },	/* PF0-PF5 */
 };
 
 static const struct sunxi_pinctrl_desc __maybe_unused sun8i_t113_pinctrl_desc = {

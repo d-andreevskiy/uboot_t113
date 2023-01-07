@@ -260,7 +260,7 @@ static int mmc_config_clock(struct sunxi_mmc_priv *priv, struct mmc *mmc)
 	rval &= ~SUNXI_MMC_CLK_DIVIDER_MASK;
 	writel(rval, &priv->reg->clkcr);
 
-#if defined(CONFIG_SUNXI_GEN_SUN6I) || defined(CONFIG_SUN50I_GEN_H6)
+#if defined(CONFIG_SUNXI_GEN_SUN6I) || defined(CONFIG_SUN50I_GEN_H6) || defined(CONFIG_MACH_SUN8I_T113)
 	/* A64 supports calibration of delays on MMC controller and we
 	 * have to set delay of zero before starting calibration.
 	 * Allwinner BSP driver sets a delay only in the case of
@@ -662,6 +662,9 @@ static unsigned get_mclk_offset(void)
 	if (IS_ENABLED(CONFIG_SUN50I_GEN_H6))
 		return 0x830;
 
+	if (IS_ENABLED(CONFIG_MACH_SUN8I_T113))
+		return 0x830;
+
 	return 0x88;
 };
 
@@ -746,6 +749,7 @@ static const struct udevice_id sunxi_mmc_ids[] = {
 	{ .compatible = "allwinner,sun50i-h6-emmc" },
 	{ .compatible = "allwinner,sun50i-a100-mmc" },
 	{ .compatible = "allwinner,sun50i-a100-emmc" },
+    { .compatible = "allwinner,sun8i-t113-mmc"},
 	{ /* sentinel */ }
 };
 
