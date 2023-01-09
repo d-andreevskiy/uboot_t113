@@ -51,7 +51,7 @@
 
 #define SUNXI_HDMI_BASE			0x05500000
 #define SUNXI_TCON_TOP_BASE		0x05600000
-#define SUNXI_TCON_LCD0_BASE	0x05461000
+#define SUNXI_LCD0_BASE	        0x05461000
 #define SUNXI_TCON_TV0_BASE		0x05470000
 
 #define SUNXI_RTC_BASE			0x07090000
@@ -72,6 +72,8 @@
 #define SUNXI_GPADC_BASE                  (0x02009000L)
 #define SUNXI_LRADC_BASE                  (0x02009800L)
 #define SUNXI_KEYADC_BASE                 SUNXI_LRADC_BASE
+
+#define SUNXI_DE2_BASE			0x05000000
 
 #ifndef __ASSEMBLY__
 void sunxi_board_init(void);

@@ -46,10 +46,14 @@ static int sunxi_lcd_enable(struct udevice *dev, int bpp,
 	struct udevice *backlight;
 	int clk_div, clk_double, ret;
 
+#ifdef CONFIG_MACH_SUN8I_T113
+
+#else
 	/* Reset off */
 	setbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_LCD0);
 	/* Clock on */
 	setbits_le32(&ccm->ahb_gate1, 1 << AHB_GATE_OFFSET_LCD0);
+#endif
 
 	lcdc_init(lcdc);
 	sunxi_lcdc_config_pinmux();

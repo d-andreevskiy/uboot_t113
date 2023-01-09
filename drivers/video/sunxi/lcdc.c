@@ -210,6 +210,14 @@ void lcdc_tcon1_mode_set(struct sunxi_lcdc_reg * const lcdc,
 #endif
 }
 
+#ifdef CONFIG_MACH_SUN8I_T113
+void lcdc_pll_set(struct sunxi_ccm_reg *ccm, int tcon, int dotclock,
+		  int *clk_div, int *clk_double, bool is_composite)
+{
+    
+}
+#else
+
 void lcdc_pll_set(struct sunxi_ccm_reg *ccm, int tcon, int dotclock,
 		  int *clk_div, int *clk_double, bool is_composite)
 {
@@ -334,3 +342,5 @@ void lcdc_pll_set(struct sunxi_ccm_reg *ccm, int tcon, int dotclock,
 	*clk_div = best_m;
 	*clk_double = best_double;
 }
+
+#endif

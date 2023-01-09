@@ -434,6 +434,9 @@ struct sunxi_ccm_reg {
 #define USBPHY1_RST_BIT 30
 #define USBPHY1_SCLK_GATING_BIT 29
 
+/* CCM bits common to all Display Engine 2.0 clock ctrl regs */
+#define CCM_DE2_CTRL_GATE		(0x1 << 31)
+
 void clock_set_pll1(unsigned int hz);
 void clock_set_pll5(unsigned int clk);
 unsigned int clock_get_pll6(void);

@@ -45,6 +45,9 @@ static void sunxi_de2_composer_init(void)
 	writel(reg_value, SUNXI_SRAMC_BASE + 0x04);
 #endif
 
+#ifdef CONFIG_MACH_SUN8I_T113
+
+#else
 	clock_set_pll10(432000000);
 
 	/* Set DE parent to pll10 */
@@ -54,6 +57,7 @@ static void sunxi_de2_composer_init(void)
 	/* Set ahb gating to pass */
 	setbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_DE);
 	setbits_le32(&ccm->ahb_gate1, 1 << AHB_GATE_OFFSET_DE);
+#endif
 
 	/* Clock on */
 	setbits_le32(&ccm->de_clk_cfg, CCM_DE2_CTRL_GATE);
@@ -253,6 +257,7 @@ static int sunxi_de2_probe(struct udevice *dev)
 
 	debug("%s: lcd display not found (ret=%d)\n", __func__, ret);
 
+#if !defined(CONFIG_MACH_SUN8I_T113)
 	ret = uclass_get_device_by_driver(UCLASS_DISPLAY,
 					  DM_DRIVER_GET(sunxi_dw_hdmi), &disp);
 	if (!ret) {
@@ -271,6 +276,7 @@ static int sunxi_de2_probe(struct udevice *dev)
 	}
 
 	debug("%s: hdmi display not found (ret=%d)\n", __func__, ret);
+#endif
 
 	return -ENODEV;
 }
@@ -307,7 +313,12 @@ U_BOOT_DRVINFO(sunxi_de2) = {
 #if defined(CONFIG_OF_BOARD_SETUP) && defined(CONFIG_VIDEO_DT_SIMPLEFB)
 int sunxi_simplefb_setup(void *blob)
 {
-	struct udevice *de2, *hdmi, *lcd;
+#ifdef CONFIG_MACH_SUN8I_T113
+    struct udevice *de2, *lcd;
+#else
+    struct udevice *de2, *hdmi, *lcd;
+#endif
+
 	struct video_priv *de2_priv;
 	struct video_uc_plat *de2_plat;
 	int mux;
@@ -333,6 +344,7 @@ int sunxi_simplefb_setup(void *blob)
 		return 0;
 	}
 
+#if !defined(CONFIG_MACH_SUN8I_T113)
 	ret = uclass_get_device_by_driver(UCLASS_DISPLAY,
 					  DM_DRIVER_GET(sunxi_dw_hdmi), &hdmi);
 	if (ret) {
@@ -345,6 +357,7 @@ int sunxi_simplefb_setup(void *blob)
 	} else {
 		debug("HDMI present but not probed\n");
 	}
+#endif
 
 	ret = uclass_get_device_by_driver(UCLASS_DISPLAY,
 					  DM_DRIVER_GET(sunxi_lcd), &lcd);

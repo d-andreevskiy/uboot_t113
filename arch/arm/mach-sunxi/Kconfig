@@ -313,6 +313,7 @@ config MACH_SUN8I_T113
 	select CPU_V7A
 	select DRAM_SUN8I_T113
 	select SUPPORT_SPL
+    select SUNXI_DE2
     select MMC_SUNXI_HAS_NEW_MODE
 
 config MACH_SUN8I_V3S
@@ -947,7 +948,6 @@ config VIDEO_DE2
 	depends on SUNXI_DE2
 	select VIDEO
 	select DISPLAY
-	select VIDEO_DW_HDMI
 	imply VIDEO_DT_SIMPLEFB
 	default y
 	---help---
