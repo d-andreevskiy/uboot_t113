@@ -131,3 +131,11 @@
 &pwm {
     status = "okay";
 };
+
+&ehci1 {
+    status = "disable";
+};
+
+&ohci1 {
+    status = "disable";
+};

@@ -7,6 +7,14 @@
 #define CLK_BUS_UART0		2
 #define CLK_BUS_OTG		    3
 
+#define CLK_USB_OHCI0		4
+#define CLK_USB_OHCI1		5
+#define CLK_BUS_OHCI0		6
+#define CLK_BUS_OHCI1		7
+#define CLK_BUS_EHCI0		8
+#define CLK_BUS_EHCI1		9
+
+
 #define CLK_MMC0		45
 #define CLK_SPI0		46
 

@@ -208,4 +208,18 @@ sunxi_de2_probe
     -> video_set_flush_dcache
 
 
+3. 接下来分析一下 backlight 背光功能，MQ_DUAL默认背光常亮
+simple_panel_of_to_plat
+    -> uclass_get_device_by_phandle(UCLASS_PANEL_BACKLIGHT, dev, "backlight", &priv->backlight)
+        -> pwm_backlight_of_to_plat
+            -> dev_read_phandle_with_args(dev, "pwms", "#pwm-cells", 0, 0, &args);      
+            -> uclass_get_device_by_ofnode(UCLASS_PWM, args.node, &priv->pwm);          /* 这两行用来寻找 pwm 驱动 */
+            -> dev_read_u32_default(dev, "default-brightness-level", 255);
+            -> dev_read_prop(dev, "brightness-levels", &len);                           /* 读取 backlight 等级 */
+        -> pwm_backlight_probe （空）
+
+sunxi_lcd_enable 中如下调用 会使能 PWM
+	ret = uclass_get_device(UCLASS_PANEL_BACKLIGHT, 0, &backlight);
+	if (!ret)
+		backlight_enable(backlight);
 

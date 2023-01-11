@@ -19,6 +19,13 @@ static struct ccu_clk_gate t113_gates[] = {
 	[CLK_BUS_UART0]		= GATE(0x90C, BIT(0)),
     [CLK_BUS_OTG]		= GATE(0xa8c, BIT(8)),
 
+	[CLK_USB_OHCI0]		= GATE(0xa70, BIT(31)),
+	[CLK_USB_OHCI1]		= GATE(0xa74, BIT(31)),
+	[CLK_BUS_OHCI0]		= GATE(0xa8c, BIT(0)),
+	[CLK_BUS_OHCI1]		= GATE(0xa8c, BIT(1)),
+	[CLK_BUS_EHCI0]		= GATE(0xa8c, BIT(4)),
+	[CLK_BUS_EHCI1]		= GATE(0xa8c, BIT(5)),
+
     [CLK_SPI0]		    = GATE(0x940, BIT(31)),
 };
 
@@ -29,6 +36,11 @@ static struct ccu_reset t113_resets[] = {
     [RST_BUS_OTG]		= RESET(0xa8c, BIT(24)),
     [RST_USB_PHY0]		= RESET(0xa70, BIT(30)),
     [RST_USB_PHY1]		= RESET(0xa74, BIT(30)),
+
+	[RST_BUS_OHCI0]		= RESET(0xa8c, BIT(16)),
+	[RST_BUS_OHCI1]		= RESET(0xa8c, BIT(17)),
+	[RST_BUS_EHCI0]		= RESET(0xa8c, BIT(20)),
+	[RST_BUS_EHCI1]		= RESET(0xa8c, BIT(21)),
 };
 
 const struct ccu_desc t113_ccu_desc = {
