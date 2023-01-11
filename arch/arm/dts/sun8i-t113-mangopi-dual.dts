@@ -56,6 +56,37 @@
 	chosen {
         stdout-path = "serial0:115200n8";
 	};
+
+    backlight: backlight {
+        compatible = "pwm-backlight";
+        pwms = <&pwm 0 50000 0>;
+        brightness-levels = <0 2 4 8 16 32 64 128 255>;
+        default-brightness-level = <8>;
+    };
+
+    panel-rgb@0 {
+        compatible = "simple-panel";
+        backlight = <&backlight>;
+
+        display-timings {
+            timing@0 {
+                clock-frequency = <33000000>;
+                hactive = <800>;
+                vactive = <480>;
+                hfront-porch = <40>;
+                hback-porch = <87>;
+                hsync-len = <1>;
+                vfront-porch = <13>;
+                vback-porch = <31>;
+                vsync-len = <1>;
+                hsync-active = <0>;
+                vsync-active = <0>;
+                de-active = <1>;
+                pixelclk-active = <1>;
+                bits-per-pixel = <18>;
+            };
+        };
+    };
 };
 
 &uart0 {
@@ -95,4 +126,8 @@
 	// usb0_vbus-supply = <&reg_usbvbus>;
 	// usb1_vbus-supply = <&reg_usbvbus>;
 	status = "okay";
+};
+
+&pwm {
+    status = "okay";
 };

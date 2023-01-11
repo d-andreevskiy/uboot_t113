@@ -214,7 +214,11 @@ void lcdc_tcon1_mode_set(struct sunxi_lcdc_reg * const lcdc,
 void lcdc_pll_set(struct sunxi_ccm_reg *ccm, int tcon, int dotclock,
 		  int *clk_div, int *clk_double, bool is_composite)
 {
-    
+    unsigned int clk = 0;
+
+    clk = clock_get_video();
+
+    *clk_div = clk / 1000 / dotclock / 2;
 }
 #else
 

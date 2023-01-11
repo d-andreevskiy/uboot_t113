@@ -46,7 +46,13 @@ static void sunxi_de2_composer_init(void)
 #endif
 
 #ifdef CONFIG_MACH_SUN8I_T113
-
+    /* deassert and gating */
+    setbits_le32(&ccm->tcon_lcd_gate_reset, 0x00010001);
+    setbits_le32(&ccm->de_gate_reset, 0x00010001);
+    
+    clock_set_video();
+    
+    setbits_le32(&ccm->tcon_tv_gate_reset, 1);
 #else
 	clock_set_pll10(432000000);
 
@@ -57,10 +63,10 @@ static void sunxi_de2_composer_init(void)
 	/* Set ahb gating to pass */
 	setbits_le32(&ccm->ahb_reset1_cfg, 1 << AHB_RESET_OFFSET_DE);
 	setbits_le32(&ccm->ahb_gate1, 1 << AHB_GATE_OFFSET_DE);
-#endif
 
 	/* Clock on */
 	setbits_le32(&ccm->de_clk_cfg, CCM_DE2_CTRL_GATE);
+#endif
 }
 
 static void sunxi_de2_mode_set(int mux, const struct display_timing *mode,

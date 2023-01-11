@@ -25,7 +25,7 @@ struct sunxi_lcd_priv {
 
 static void sunxi_lcdc_config_pinmux(void)
 {
-#ifdef CONFIG_MACH_SUN50I
+#if defined(CONFIG_MACH_SUN50I) || defined(CONFIG_MACH_SUN8I_T113)
 	int pin;
 
 	for (pin = SUNXI_GPD(0); pin <= SUNXI_GPD(21); pin++) {
@@ -149,7 +149,7 @@ U_BOOT_DRIVER(sunxi_lcd) = {
 	.priv_auto	= sizeof(struct sunxi_lcd_priv),
 };
 
-#ifdef CONFIG_MACH_SUN50I
+#if defined(CONFIG_MACH_SUN50I) || defined(CONFIG_MACH_SUN8I_T113)
 U_BOOT_DRVINFO(sunxi_lcd) = {
 	.name = "sunxi_lcd"
 };

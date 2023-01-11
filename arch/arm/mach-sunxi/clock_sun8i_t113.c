@@ -258,4 +258,19 @@ unsigned int clock_get_peri1x_rate(void)
 	return 0;
 }
 
+unsigned int clock_set_video(void)
+{
+    struct sunxi_ccm_reg * const ccm =
+        (struct sunxi_ccm_reg *)SUNXI_CCM_BASE;
 
+    /* PLL_VIDEO0(4X) / 3 = 1188MHz / 3 = 396MHz */
+	setbits_le32(&ccm->de_clk_cfg, 0x81000002);
+    setbits_le32(&ccm->tcon_lcd0_clk_cfg, 0x81000002);
+
+    return 0;
+}
+
+unsigned int clock_get_video(void)
+{
+    return 396000000;
+}
