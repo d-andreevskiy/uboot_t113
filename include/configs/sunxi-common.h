@@ -304,11 +304,12 @@
 #endif
 
 /*
-    fastboot oem format
-    fastboot flash boot.vfat
-    fastboot flash rootfs.ext4
+fastboot oem format
+fastboot flash loader output/images/u-boot-sunxi-with-spl.bin
+fastboot flash esp output/images/boot.vfat
+fastboot flash system output/images/rootfs.ext4
+fastboot reboot
 */
-
 #ifdef CONFIG_MACH_SUN8I_T113
 #define PARTS_DEFAULT \
 	"name=loader,start=8k,size=4M;" \
