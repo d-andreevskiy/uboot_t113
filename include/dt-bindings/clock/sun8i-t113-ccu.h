@@ -14,6 +14,8 @@
 #define CLK_BUS_EHCI0		8
 #define CLK_BUS_EHCI1		9
 
+#define CLK_BUS_PWM		    10
+
 
 #define CLK_MMC0		45
 #define CLK_SPI0		46

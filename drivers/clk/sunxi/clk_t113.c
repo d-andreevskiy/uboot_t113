@@ -26,6 +26,8 @@ static struct ccu_clk_gate t113_gates[] = {
 	[CLK_BUS_EHCI0]		= GATE(0xa8c, BIT(4)),
 	[CLK_BUS_EHCI1]		= GATE(0xa8c, BIT(5)),
 
+    [CLK_BUS_PWM]		= GATE(0x7ac, BIT(0)),
+    
     [CLK_SPI0]		    = GATE(0x940, BIT(31)),
 };
 
@@ -41,6 +43,8 @@ static struct ccu_reset t113_resets[] = {
 	[RST_BUS_OHCI1]		= RESET(0xa8c, BIT(17)),
 	[RST_BUS_EHCI0]		= RESET(0xa8c, BIT(20)),
 	[RST_BUS_EHCI1]		= RESET(0xa8c, BIT(21)),
+
+    [RST_BUS_PWM]		= RESET(0x7ac, BIT(16)),
 };
 
 const struct ccu_desc t113_ccu_desc = {

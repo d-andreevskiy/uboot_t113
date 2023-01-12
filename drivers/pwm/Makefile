@@ -22,5 +22,9 @@ obj-$(CONFIG_PWM_ROCKCHIP)	+= rk_pwm.o
 obj-$(CONFIG_PWM_SANDBOX)	+= sandbox_pwm.o
 obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
 obj-$(CONFIG_PWM_TEGRA)		+= tegra_pwm.o
+ifdef CONFIG_MACH_SUN8I_T113
+obj-$(CONFIG_PWM_SUNXI)		+= sun8i_t113_pwm.o
+else
 obj-$(CONFIG_PWM_SUNXI)		+= sunxi_pwm.o
+endif
 obj-$(CONFIG_PWM_TI_EHRPWM)	+= pwm-ti-ehrpwm.o

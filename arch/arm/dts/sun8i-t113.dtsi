@@ -65,6 +65,12 @@
 				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
 				function = "mmc0";
 			};
+
+			/omit-if-no-ref/
+			pwm7_pd22_pin: pwm7-pd22-pin {
+				pins = "PD22";
+				function = "pwm7";
+			};
         };
 
 		ccu: clock-controller@2001000 {
@@ -168,7 +174,8 @@
 		pwm: pwm@2000c00 {
 			compatible = "allwinner,sun8i-t113-pwm";
 			reg = <0x2000c00 0x400>;
-            clocks = <&osc24M>;
+            clocks = <&ccu CLK_BUS_PWM>;
+            resets = <&ccu RST_BUS_PWM>;
             #pwm-cells = <3>;
             status = "disabled";
         };  

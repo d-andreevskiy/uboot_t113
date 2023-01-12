@@ -59,9 +59,11 @@
 
     backlight: backlight {
         compatible = "pwm-backlight";
-        pwms = <&pwm 0 50000 0>;
+        pwms = <&pwm 7 50000 0>;
+        pinctrl-0 = <&pwm7_pd22_pin>;
+        pinctrl-names = "default";
         brightness-levels = <0 2 4 8 16 32 64 128 255>;
-        default-brightness-level = <8>;
+        default-brightness-level = <7>;
     };
 
     panel-rgb@0 {

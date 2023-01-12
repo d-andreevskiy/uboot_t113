@@ -14,4 +14,6 @@
 #define RST_BUS_EHCI0		8
 #define RST_BUS_EHCI1		9
 
+#define RST_BUS_PWM		    10
+
 #endif /* _DT_BINDINGS_RST_SUN8I_T113_H_ */
