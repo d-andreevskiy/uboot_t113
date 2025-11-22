@@ -16,6 +16,7 @@
 #define SUNXI_BOOTED_FROM_NAND	1
 #define SUNXI_BOOTED_FROM_MMC2	2
 #define SUNXI_BOOTED_FROM_SPI	3
+#define SUNXI_BOOTED_FROM_SPI_NAND     4
 #define SUNXI_BOOTED_FROM_MMC0_HIGH	0x10
 #define SUNXI_BOOTED_FROM_MMC2_HIGH	0x12
 
@@ -27,6 +28,8 @@
 #define SUNIV_BOOTED_FROM_NAND	0xffff4114
 #define SUNIV_BOOTED_FROM_SPI	0xffff4130
 #define SUNIV_BOOTED_FROM_MMC1	0xffff4150
+#define SUNIV_BOOTED_FROM_FEL   0xe1a00000
+
 
 uint32_t sunxi_get_boot_device(void);
 uint32_t sunxi_get_spl_size(void);
